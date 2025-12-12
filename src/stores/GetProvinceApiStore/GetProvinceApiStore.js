@@ -23,7 +23,7 @@ export class GetProvinceApiStore {
         this.statusCode = code;
     }
 
-    async handle() {
+    async handleGetProvinceService() {
         try {
             this.updateIsError(false);
             this.updateStatusCode(null);

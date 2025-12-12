@@ -78,8 +78,6 @@ const McAllData = observer(() => {
             const body = new GetAllDataDTO({ skip, take: pageSize });
             const result = await getAllDataApiStore.handleGetAllDataService(body);
 
-            console.log('raw result from service:', result);
-
             if (result.error) {
                 setRows([]);
                 setTotal(0);

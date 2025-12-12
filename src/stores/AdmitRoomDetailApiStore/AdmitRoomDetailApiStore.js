@@ -22,7 +22,7 @@ export class AdmitRoomDetailApiStore {
         this.statusCode = code;
     }
 
-    async handle(at_id) {
+    async handleAdmitRoomDetailService(at_id) {
         try {
             this.updateIsError(false);
             this.updateStatusCode(null);

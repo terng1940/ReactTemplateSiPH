@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AddCircleOutline, RemoveCircleOutline, Send } from '@mui/icons-material';
+import { useStores } from 'contexts/StoreContext';
 
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
@@ -14,46 +15,75 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Alert from '@mui/material/Alert';
 
-const roomTypes = [
-    { label: 'EXECUTIVE', value: 'EXECUTIVE' },
-    { label: 'VIP', value: 'VIP' },
-    { label: 'DELUXE', value: 'DELUXE' }
-];
-
 const McRegister = () => {
+    const { getProvinceApiStore, getRoomApiStore } = useStores();
     const [hn, setHn] = useState('');
     const [roomType, setRoomType] = useState('');
-    const [plates, setPlates] = useState(['']);
     const [submitted, setSubmitted] = useState(false);
+    const [roomList, setRoomList] = useState([]);
+    const [provinceList, setProvinceList] = useState([]);
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [plates, setPlates] = useState([{ plate: '', province: '' }]);
 
-    const handlePlateChange = (index, value) => {
+    const handlePlateChange = (index, field, value) => {
         const updated = [...plates];
-        updated[index] = value;
+        updated[index][field] = value;
         setPlates(updated);
     };
 
-    const addPlate = () => setPlates([...plates, '']);
+    const addPlate = () => {
+        if (!selectedRoom) return;
+        if (plates.length < selectedRoom.limitCars) {
+            setPlates([...plates, { plate: '', province: '' }]);
+        }
+    };
+
     const removePlate = (index) => {
-        const updated = plates.filter((_, i) => i !== index);
-        setPlates(updated);
+        if (plates.length > 1) {
+            setPlates(plates.filter((_, i) => i !== index));
+        }
     };
 
     const handleSubmit = () => {
         const body = {
             hn,
             roomType,
-            plates: plates.filter((plate) => plate.trim() !== '')
+            plates: plates
+                .filter((p) => p.plate.trim() !== '')
+                .map((p) => ({
+                    plate: p.plate,
+                    province: p.province
+                }))
         };
 
         console.log('Submit Data:', body);
         setSubmitted(true);
 
-        // Reset submission status after 3 seconds
         setTimeout(() => setSubmitted(false), 3000);
     };
 
-    // Check if form can be submitted
     const canSubmit = hn.trim() !== '' && roomType !== '';
+
+    const handleRoomChange = (value) => {
+        setRoomType(value);
+
+        const room = roomList.find((r) => r.roomMasterId === value);
+        setSelectedRoom(room);
+    };
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            const resRoom = await getRoomApiStore.handleGetRoomService();
+            const roomData = resRoom?.data ?? resRoom?.response?.data ?? [];
+            if (Array.isArray(roomData)) setRoomList(roomData);
+
+            const resProv = await getProvinceApiStore();
+            const list = resProv?.data ?? resProv?.response?.data ?? [];
+            if (Array.isArray(list)) setProvinceList(list);
+        };
+
+        fetchInitialData();
+    }, [getRoomApiStore, getProvinceApiStore]);
 
     return (
         <Container
@@ -74,7 +104,6 @@ const McRegister = () => {
                     borderTop: '6px solid #1976d2'
                 }}
             >
-                {/* Header with Logo */}
                 <Box
                     sx={{
                         backgroundColor: '#1976d2',
@@ -94,7 +123,6 @@ const McRegister = () => {
                 </Box>
 
                 <CardContent sx={{ p: 4 }}>
-                    {/* Form Title */}
                     <Typography
                         variant="h5"
                         align="center"
@@ -115,7 +143,6 @@ const McRegister = () => {
                     )}
 
                     <Grid container spacing={3}>
-                        {/* HN Field */}
                         <Grid item xs={12} md={6}>
                             <TextField
                                 fullWidth
@@ -128,27 +155,26 @@ const McRegister = () => {
                             />
                         </Grid>
 
-                        {/* Room Type Field */}
                         <Grid item xs={12} md={6}>
                             <TextField
                                 select
                                 fullWidth
                                 label="ROOM TYPE"
                                 value={roomType}
-                                onChange={(e) => setRoomType(e.target.value)}
+                                onChange={(e) => handleRoomChange(e.target.value)}
                                 variant="outlined"
                                 required
                             >
                                 <MenuItem value="">-- เลือกห้อง --</MenuItem>
-                                {roomTypes.map((r) => (
-                                    <MenuItem key={r.value} value={r.value}>
-                                        {r.label}
+
+                                {roomList.map((room) => (
+                                    <MenuItem key={room.roomMasterId} value={room.roomMasterId}>
+                                        {room.roomDescription} (รถได้ {room.limitCars} คัน)
                                     </MenuItem>
                                 ))}
                             </TextField>
                         </Grid>
 
-                        {/* License Plates Section */}
                         <Grid item xs={12}>
                             <Divider sx={{ my: 2 }}>
                                 <Typography color="primary" fontWeight="bold">
@@ -157,28 +183,38 @@ const McRegister = () => {
                             </Divider>
 
                             <Box sx={{ mt: 2 }}>
-                                {plates.map((plate, index) => (
-                                    <Box
-                                        key={index}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            mb: 2,
-                                            gap: 1
-                                        }}
-                                    >
+                                {plates.map((p, index) => (
+                                    <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                                        {/* ป้ายทะเบียน */}
                                         <TextField
                                             fullWidth
                                             label={`License Plate ${index + 1}`}
-                                            value={plate}
-                                            onChange={(e) => handlePlateChange(index, e.target.value)}
-                                            placeholder="เช่น กข1111"
-                                            variant="outlined"
-                                            sx={{ flexGrow: 1 }}
+                                            value={p.plate}
+                                            onChange={(e) => handlePlateChange(index, 'plate', e.target.value)}
+                                            placeholder="เช่น กข 1234"
                                         />
 
+                                        {/* จังหวัด */}
+                                        <TextField
+                                            select
+                                            fullWidth
+                                            label="Province"
+                                            value={p.province}
+                                            onChange={(e) => handlePlateChange(index, 'province', e.target.value)}
+                                        >
+                                            <MenuItem value="">เลือกจังหวัด</MenuItem>
+                                            {provinceList
+                                                .sort((a, b) => a.nameTh.localeCompare(b.nameTh, 'th'))
+                                                .map((prov) => (
+                                                    <MenuItem key={prov.id} value={prov.nameTh}>
+                                                        {prov.nameTh}
+                                                    </MenuItem>
+                                                ))}
+                                        </TextField>
+
+                                        {/* ปุ่มลบ */}
                                         {plates.length > 1 && (
-                                            <IconButton onClick={() => removePlate(index)} color="error" aria-label="Remove plate">
+                                            <IconButton onClick={() => removePlate(index)} color="error">
                                                 <RemoveCircleOutline />
                                             </IconButton>
                                         )}
@@ -191,13 +227,13 @@ const McRegister = () => {
                                     variant="outlined"
                                     color="primary"
                                     sx={{ mt: 1 }}
+                                    disabled={selectedRoom && plates.length >= selectedRoom.limitCars}
                                 >
                                     ADD ANOTHER PLATE
                                 </Button>
                             </Box>
                         </Grid>
 
-                        {/* Submit Button */}
                         <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
                             <Button
                                 variant="contained"
@@ -224,7 +260,6 @@ const McRegister = () => {
                         </Grid>
                     </Grid>
 
-                    {/* Footer Note */}
                     <Box sx={{ mt: 4, pt: 2, borderTop: '1px solid #e0e0e0' }}>
                         <Typography variant="caption" color="text.secondary" align="center">
                             ระบบลงทะเบียนรถสำหรับผู้ป่วยใน ข้อมูลจะถูกใช้เพื่อการจัดบริการที่เหมาะสม

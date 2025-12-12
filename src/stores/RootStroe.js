@@ -1,6 +1,7 @@
 import { AdmitRoomDetailApiStore } from './AdmitRoomDetailApiStore/AdmitRoomDetailApiStore';
 import { GetAllDataApiStore } from './GetAllDataApiStore/GetAllDataApiStore';
 import { GetProvinceApiStore } from './GetProvinceApiStore/GetProvinceApiStore';
+import { GetRoomApiStore } from './GetRoomApiStore/GetRoomApiStore';
 import { LoginApiStore } from './LoginApiStore/LoginApiStore';
 import { RefreshTokenApiStore } from './RefreshTokenApiStore/RefreshTokenApiStore';
 import { RegisterApiStore } from './RegisterApiStore/RegisterApiStore';
@@ -10,6 +11,7 @@ export const rootStore = {
     admitRoomDetailApiStore: new AdmitRoomDetailApiStore(),
     getAllDataApiStore: new GetAllDataApiStore(),
     getProvinceApiStore: new GetProvinceApiStore(),
+    getRoomApiStore: new GetRoomApiStore(),
     refreshTokenApiStore: new RefreshTokenApiStore(),
     verifyTokenApiStore: new VerifyTokenApiStore(),
     loginApiStore: new LoginApiStore(),

@@ -23,7 +23,7 @@ export class GetRoomApiStore {
         this.statusCode = code;
     }
 
-    async handle() {
+    async handleGetRoomService() {
         try {
             this.updateIsError(false);
             this.updateStatusCode(null);
