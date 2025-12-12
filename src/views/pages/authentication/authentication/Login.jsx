@@ -20,6 +20,8 @@ import AuthSlider from 'ui-component/cards/AuthSlider';
 import AuthBlueCard from 'assets/images/auth/auth-blue-card.svg';
 import AuthPurpleCard from 'assets/images/auth/auth-purple-card.svg';
 
+import RoutePaths from 'routes/routePaths';
+
 // carousel items
 const items = [
     {
@@ -84,7 +86,7 @@ const Login = () => {
                                 <Grid item container direction="column" alignItems="flex-end" xs={12}>
                                     <Typography
                                         component={Link}
-                                        to="/pages/register/register1"
+                                        to={RoutePaths.register}
                                         variant="subtitle1"
                                         sx={{ textDecoration: 'none' }}
                                     >

@@ -5,13 +5,14 @@ import GuestGuard from 'utils/route-guard/GuestGuard';
 import MinimalLayout from 'layout/MinimalLayout';
 import NavMotion from 'layout/NavMotion';
 import Loadable from 'ui-component/Loadable';
+import RoutePaths from './routePaths';
 
 // login routing
-const AuthLogin = Loadable(lazy(() => import('views/pages/authentication/authentication3/Login3')));
-const AuthRegister = Loadable(lazy(() => import('views/pages/authentication/authentication3/Register3')));
-const AuthForgotPassword = Loadable(lazy(() => import('views/pages/authentication/authentication3/ForgotPassword3')));
-const AuthResetPassword = Loadable(lazy(() => import('views/pages/authentication/authentication3/ResetPassword3')));
-const AuthCheckMail = Loadable(lazy(() => import('views/pages/authentication/authentication3/CheckMail3')));
+const AuthLogin = Loadable(lazy(() => import('views/pages/authentication/authentication/Login')));
+const AuthRegister = Loadable(lazy(() => import('views/pages/authentication/authentication/Register')));
+const AuthForgotPassword = Loadable(lazy(() => import('views/pages/authentication/authentication/ForgotPassword')));
+const AuthResetPassword = Loadable(lazy(() => import('views/pages/authentication/authentication/ResetPassword')));
+const AuthCheckMail = Loadable(lazy(() => import('views/pages/authentication/authentication/CheckMail')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 
@@ -26,7 +27,7 @@ const LoginRoutes = {
     ),
     children: [
         {
-            path: '/login',
+            path: RoutePaths.login,
             element: <AuthLogin />
         },
         {
@@ -38,7 +39,7 @@ const LoginRoutes = {
             element: <AuthForgotPassword />
         },
         {
-            path: '/reset-password',
+            path: RoutePaths.resetPassword,
             element: <AuthResetPassword />
         },
         {

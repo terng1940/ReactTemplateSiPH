@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -30,12 +31,14 @@ import useScriptRef from 'hooks/useScriptRef';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
+import RoutePaths from 'routes/routePaths';
 // ===============================|| JWT LOGIN ||=============================== //
 
 const JWTLogin = ({ loginProp, ...others }) => {
     const theme = useTheme();
 
     const { login } = useAuth();
+    const navigate = useNavigate();
     const scriptedRef = useScriptRef();
 
     const [checked, setChecked] = React.useState(true);
@@ -60,21 +63,40 @@ const JWTLogin = ({ loginProp, ...others }) => {
                 email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
                 password: Yup.string().max(255).required('Password is required')
             })}
+            // onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+            //     try {
+            //         await login(values.email, values.password);
+
+            //         if (scriptedRef.current) {
+            //             setStatus({ success: true });
+            //             setSubmitting(false);
+            //         }
+            //     } catch (err) {
+            //         console.error(err);
+            //         if (scriptedRef.current) {
+            //             setStatus({ success: false });
+            //             setErrors({ submit: err.message });
+            //             setSubmitting(false);
+            //         }
+            //     }
+            // }}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                console.log('🔥 onSubmit fired', values);
+
                 try {
                     await login(values.email, values.password);
+                    console.log('🔥 login finished');
 
-                    if (scriptedRef.current) {
-                        setStatus({ success: true });
-                        setSubmitting(false);
-                    }
+                    navigate('/menu-mc/default');
+                    console.log('🔥 navigate done');
+
+                    setStatus({ success: true });
+                    setSubmitting(false);
                 } catch (err) {
-                    console.error(err);
-                    if (scriptedRef.current) {
-                        setStatus({ success: false });
-                        setErrors({ submit: err.message });
-                        setSubmitting(false);
-                    }
+                    console.log('❌ login error', err);
+                    setStatus({ success: false });
+                    setErrors({ submit: err.message });
+                    setSubmitting(false);
                 }
             }}
         >
@@ -148,11 +170,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                             <Typography
                                 variant="subtitle1"
                                 component={Link}
-                                to={
-                                    loginProp
-                                        ? `/pages/forgot-password/forgot-password${loginProp}`
-                                        : '/pages/forgot-password/forgot-password3'
-                                }
+                                to={RoutePaths.forgotPassword}
                                 color="secondary"
                                 sx={{ textDecoration: 'none' }}
                             >

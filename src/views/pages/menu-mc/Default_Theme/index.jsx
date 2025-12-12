@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 
 // project imports
-import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
-import TotalIncomeDarkCard from '../../../ui-component/cards/TotalIncomeDarkCard';
-import TotalIncomeLightCard from '../../../ui-component/cards/TotalIncomeLightCard';
-import TotalGrowthBarChart from './TotalGrowthBarChart';
+import EarningCard from 'views/dashboard/Default/EarningCard';
+import PopularCard from 'views/dashboard/Default/PopularCard';
+import TotalOrderLineChartCard from 'views/dashboard/Default/TotalOrderLineChartCard';
+import TotalIncomeDarkCard from 'ui-component/cards/TotalIncomeDarkCard';
+import TotalIncomeLightCard from 'ui-component/cards/TotalIncomeLightCard';
+import TotalGrowthBarChart from 'views/dashboard/Default/TotalGrowthBarChart';
 
 import { gridSpacing } from 'store/constant';
 

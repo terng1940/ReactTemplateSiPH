@@ -27,9 +27,6 @@ const verifyToken = (serviceToken) => {
         return false;
     }
     const decoded = jwtDecode(serviceToken);
-    /**
-     * Property 'exp' does not exist on type '<T = unknown>(token, options) => T'.
-     */
     return decoded.exp > Date.now() / 1000;
 };
 
@@ -53,10 +50,13 @@ export const JWTProvider = ({ children }) => {
         const init = async () => {
             try {
                 const serviceToken = window.localStorage.getItem('serviceToken');
+
                 if (serviceToken && verifyToken(serviceToken)) {
                     setSession(serviceToken);
+
                     const response = await axios.get('/api/account/me');
                     const { user } = response.data;
+
                     dispatch({
                         type: LOGIN,
                         payload: {
@@ -71,18 +71,35 @@ export const JWTProvider = ({ children }) => {
                 }
             } catch (err) {
                 console.error(err);
-                dispatch({
-                    type: LOGOUT
-                });
+                dispatch({ type: LOGOUT });
             }
         };
 
         init();
     }, []);
 
+    // const login = async (email, password) => {
+    //     const response = await axios.post('/api/v1/authorization', { email, password });
+    //     const { serviceToken, user } = response.data;
+    //     setSession(serviceToken);
+    //     dispatch({
+    //         type: LOGIN,
+    //         payload: {
+    //             isLoggedIn: true,
+    //             user
+    //         }
+    //     });
+    // };
+
     const login = async (email, password) => {
-        const response = await axios.post('/api/v1/authorization', { email, password });
-        const { serviceToken, user } = response.data;
+        const serviceToken = 'mock-token-123';
+
+        const user = {
+            id: 1,
+            email,
+            name: 'Demo User'
+        };
+
         setSession(serviceToken);
         dispatch({
             type: LOGIN,
@@ -91,6 +108,8 @@ export const JWTProvider = ({ children }) => {
                 user
             }
         });
+
+        return true;
     };
 
     const register = async (email, password, firstName, lastName) => {

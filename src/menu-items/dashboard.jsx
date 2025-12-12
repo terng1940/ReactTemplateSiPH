@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 // assets
 import { IconDashboard, IconDeviceAnalytics } from '@tabler/icons-react';
+import RoutePaths from 'routes/routePaths';
 
 const icons = {
     IconDashboard: IconDashboard,
@@ -21,16 +22,24 @@ const dashboard = {
             id: 'default',
             title: <FormattedMessage id="default" />,
             type: 'item',
-            url: '/dashboard/default',
+            url: RoutePaths.menuDefault,
             icon: icons.IconDashboard,
             breadcrumbs: false
         },
         {
-            id: 'analytics',
-            title: <FormattedMessage id="analytics" />,
+            id: 'allData',
+            title: 'ข้อมูลราย MC',
             type: 'item',
-            url: '/dashboard/analytics',
-            icon: icons.IconDeviceAnalytics,
+            url: RoutePaths.menuAllData,
+            icon: icons.IconDashboard,
+            breadcrumbs: false
+        },
+        {
+            id: 'registerMc',
+            title: 'สมัครสมาชิก MC',
+            type: 'item',
+            url: RoutePaths.menudRegister,
+            icon: icons.IconDashboard,
             breadcrumbs: false
         }
     ]

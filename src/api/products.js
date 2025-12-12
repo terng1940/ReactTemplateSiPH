@@ -1,4 +1,6 @@
 import axios from 'utils/axios';
+import { CustomException } from 'exceptions/CustomException';
+import ApiPaths from 'utils/constants/apiPath';
 
 // ⬇️ this is the loader for the detail route
 export async function loader() {
@@ -29,4 +31,229 @@ export async function getRelatedProducts(id) {
 
 export async function getProductReviews() {
     return await axios.get('/api/review/list');
+}
+
+export async function fetchLoginService(body) {
+    try {
+        const response = await axios.post(ApiPaths.login, body);
+
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchRefreshTokenService(body) {
+    try {
+        const response = await axios.post(ApiPaths.refreshToken, body);
+
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchVerifyTokenService(body) {
+    try {
+        const response = await axios.get(ApiPaths.verifyToken, body);
+
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchGetAllDataService(body) {
+    try {
+        const response = await axios.get(ApiPaths.getAllData, body);
+
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchAdmitRoomDetailService(at_id) {
+    try {
+        const response = await axios.get(`${ApiPaths.getRoomDetail}/${at_id}`);
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchUpdateDetailService(body) {
+    try {
+        const response = await axios.patch(ApiPaths.updateDetail, body);
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchAddLicensePlateService(body) {
+    try {
+        const response = await axios.post(ApiPaths.addLicensePlate, body);
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchRegisterService(body) {
+    try {
+        const response = await axios.post(ApiPaths.registerMC, body);
+
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchGetRoomService() {
+    try {
+        const response = await axios.get(ApiPaths.getRoom);
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
+export async function fetchGetProvinceService() {
+    try {
+        const response = await axios.get(ApiPaths.getProvince);
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
 }

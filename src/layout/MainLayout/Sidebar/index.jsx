@@ -10,7 +10,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
-import MenuCard from './MenuCard';
 import MenuList from '../MenuList';
 import LogoSection from '../LogoSection';
 import MiniDrawerStyled from './MiniDrawerStyled';
@@ -45,7 +44,6 @@ const Sidebar = () => {
         const isVerticalOpen = menuOrientation === MenuOrientation.VERTICAL && drawerOpen;
         const drawerContent = (
             <>
-                <MenuCard />
                 <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
                     <Chip label={import.meta.env.VITE_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
                 </Stack>

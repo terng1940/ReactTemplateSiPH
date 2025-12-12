@@ -12,13 +12,13 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import AuthWrapper1 from '../AuthWrapper1';
 import AuthCardWrapper from '../AuthCardWrapper';
 import Logo from 'ui-component/Logo';
-import AuthRegister from '../auth-forms/AuthRegister';
+import AuthForgotPassword from '../auth-forms/AuthForgotPassword';
 import BackgroundPattern1 from 'ui-component/cards/BackgroundPattern1';
 import AuthSlider from 'ui-component/cards/AuthSlider';
 
 // assets
-import AuthBlueCard from 'assets/images/auth/auth-signup-blue-card.svg';
-import AuthWhiteCard from 'assets/images/auth/auth-signup-white-card.svg';
+import AuthMultiCard from 'assets/images/auth/auth-forgot-pass-multi-card.svg';
+import RoutePaths from 'routes/routePaths';
 
 // carousel items
 const items = [
@@ -36,9 +36,9 @@ const items = [
     }
 ];
 
-// ===============================|| AUTH1 - REGISTER ||=============================== //
+// ============================|| AUTH1 - FORGOT PASSWORD ||============================ //
 
-const Register = () => {
+const ForgotPassword = () => {
     const downMD = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
     return (
@@ -58,10 +58,9 @@ const Register = () => {
                                         <Stack
                                             justifyContent={{ xs: 'center', md: 'flex-start' }}
                                             textAlign={{ xs: 'center', md: 'inherit' }}
-                                            pt={{ sm: 1 }}
                                         >
                                             <Typography color="secondary.main" gutterBottom variant={downMD ? 'h3' : 'h2'}>
-                                                Sign up
+                                                Forgot password?
                                             </Typography>
                                             <Typography color="textPrimary" gutterBottom variant="h4">
                                                 Enter credentials to continue
@@ -76,19 +75,21 @@ const Register = () => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12}>
-                                <AuthRegister />
+                                <Stack direction="row" justifyContent={{ xs: 'center', md: 'flex-start' }}>
+                                    <Typography variant="caption" fontSize="16px" textAlign={{ xs: 'center', md: 'inherit' }}>
+                                        Enter your email address below and we&apos;ll send you password reset OTP.
+                                    </Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <AuthForgotPassword />
                             </Grid>
                             <Grid item xs={12}>
                                 <Divider />
                             </Grid>
                             <Grid item xs={12}>
                                 <Grid item container direction="column" alignItems="flex-end" xs={12}>
-                                    <Typography
-                                        component={Link}
-                                        to="/pages/login/login1"
-                                        variant="subtitle1"
-                                        sx={{ textDecoration: 'none' }}
-                                    >
+                                    <Typography component={Link} to={RoutePaths.login} variant="subtitle1" sx={{ textDecoration: 'none' }}>
                                         Already have an account?
                                     </Typography>
                                 </Grid>
@@ -103,30 +104,17 @@ const Register = () => {
                                 <span />
                                 <Box
                                     sx={{
-                                        '&:after': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: { xs: '50%', xl: '45%' },
-                                            left: { xs: '25%', xl: '35%' },
-                                            width: 260,
-                                            backgroundSize: 380,
-                                            height: 290,
-                                            backgroundImage: `url(${AuthWhiteCard})`,
-                                            backgroundRepeat: 'no-repeat',
-                                            backgroundPosition: 'center',
-                                            animation: '15s wings ease-in-out infinite'
-                                        },
                                         '&:before': {
                                             content: '""',
                                             position: 'absolute',
-                                            top: { xs: '10%', xl: '12%' },
-                                            left: { xs: '15%', xl: '25%' },
-                                            width: 360,
-                                            height: 350,
-                                            backgroundSize: 460,
-                                            backgroundImage: `url(${AuthBlueCard})`,
+                                            top: { xs: '10%', xl: '18%' },
+                                            left: { xs: '6%', xl: '18%' },
+                                            width: 515,
+                                            height: 470,
+                                            backgroundImage: `url(${AuthMultiCard})`,
                                             backgroundRepeat: 'no-repeat',
                                             backgroundPosition: 'center',
+                                            backgroundSize: { xs: 450, xl: 'auto' },
                                             animation: '15s wings ease-in-out infinite',
                                             animationDelay: '1s'
                                         }
@@ -148,4 +136,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default ForgotPassword;
