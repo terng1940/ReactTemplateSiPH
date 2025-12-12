@@ -104,7 +104,7 @@ export async function fetchVerifyTokenService(body) {
 
 export async function fetchGetAllDataService(body) {
     try {
-        const response = await axios.get(ApiPaths.getAllData, body);
+        const response = await axios.get(ApiPaths.getAllData, { params: body });
 
         return { response: response.data };
     } catch (err) {

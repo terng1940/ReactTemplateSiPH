@@ -18,7 +18,7 @@ import Alert from '@mui/material/Alert';
 const McRegister = () => {
     const { getProvinceApiStore, getRoomApiStore } = useStores();
     const [hn, setHn] = useState('');
-    const [roomType, setRoomType] = useState('');
+    const [roomMasterId, setRoomType] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [roomList, setRoomList] = useState([]);
     const [provinceList, setProvinceList] = useState([]);
@@ -47,7 +47,7 @@ const McRegister = () => {
     const handleSubmit = () => {
         const body = {
             hn,
-            roomType,
+            roomMasterId,
             plates: plates
                 .filter((p) => p.plate.trim() !== '')
                 .map((p) => ({
@@ -62,7 +62,7 @@ const McRegister = () => {
         setTimeout(() => setSubmitted(false), 3000);
     };
 
-    const canSubmit = hn.trim() !== '' && roomType !== '';
+    const canSubmit = hn.trim() !== '' && roomMasterId !== '';
 
     const handleRoomChange = (value) => {
         setRoomType(value);
@@ -77,7 +77,7 @@ const McRegister = () => {
             const roomData = resRoom?.data ?? resRoom?.response?.data ?? [];
             if (Array.isArray(roomData)) setRoomList(roomData);
 
-            const resProv = await getProvinceApiStore();
+            const resProv = await getProvinceApiStore.handleGetProvinceService();
             const list = resProv?.data ?? resProv?.response?.data ?? [];
             if (Array.isArray(list)) setProvinceList(list);
         };
@@ -160,7 +160,7 @@ const McRegister = () => {
                                 select
                                 fullWidth
                                 label="ROOM TYPE"
-                                value={roomType}
+                                value={roomMasterId}
                                 onChange={(e) => handleRoomChange(e.target.value)}
                                 variant="outlined"
                                 required
