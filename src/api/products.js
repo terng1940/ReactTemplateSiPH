@@ -193,7 +193,7 @@ export async function fetchAddLicensePlateService(body) {
 
 export async function fetchRegisterService(body) {
     try {
-        const response = await axios.post(ApiPaths.registerMC, body);
+        const response = await axios.post(ApiPaths.registerMC, body.toJSON());
 
         return { response: response.data };
     } catch (err) {

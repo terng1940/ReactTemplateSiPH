@@ -12,6 +12,7 @@ import accountReducer from 'store/accountReducer';
 // project imports
 import Loader from 'ui-component/Loader';
 import axios from 'utils/axios';
+import ApiPaths from 'utils/constants/apiPath';
 
 const chance = new Chance();
 
@@ -54,7 +55,7 @@ export const JWTProvider = ({ children }) => {
                 if (serviceToken && verifyToken(serviceToken)) {
                     setSession(serviceToken);
 
-                    const response = await axios.get('/api/account/me');
+                    const response = await axios.get(ApiPaths.verifyToken);
                     const { user } = response.data;
 
                     dispatch({
@@ -78,28 +79,9 @@ export const JWTProvider = ({ children }) => {
         init();
     }, []);
 
-    // const login = async (email, password) => {
-    //     const response = await axios.post('/api/v1/authorization', { email, password });
-    //     const { serviceToken, user } = response.data;
-    //     setSession(serviceToken);
-    //     dispatch({
-    //         type: LOGIN,
-    //         payload: {
-    //             isLoggedIn: true,
-    //             user
-    //         }
-    //     });
-    // };
-
     const login = async (email, password) => {
-        const serviceToken = 'mock-token-123';
-
-        const user = {
-            id: 1,
-            email,
-            name: 'Demo User'
-        };
-
+        const response = await axios.post(ApiPaths.login, { email, password });
+        const { serviceToken, user } = response.data;
         setSession(serviceToken);
         dispatch({
             type: LOGIN,
@@ -108,9 +90,28 @@ export const JWTProvider = ({ children }) => {
                 user
             }
         });
-
-        return true;
     };
+
+    // const login = async (email, password) => {
+    //     const serviceToken = 'mock-token-123';
+
+    //     const user = {
+    //         id: 1,
+    //         email,
+    //         name: 'Demo User'
+    //     };
+
+    //     setSession(serviceToken);
+    //     dispatch({
+    //         type: LOGIN,
+    //         payload: {
+    //             isLoggedIn: true,
+    //             user
+    //         }
+    //     });
+
+    //     return true;
+    // };
 
     const register = async (email, password, firstName, lastName) => {
         // todo: this flow need to be recode as it not verified

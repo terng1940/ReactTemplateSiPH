@@ -11,15 +11,12 @@ import Paper from '@mui/material/Paper';
 import ModalEditAdmit from './modalEditAdmit';
 
 const McAllData = observer(() => {
-    const { getAllDataApiStore } = useStores();
+    const { getAllDataApiStore, admitRoomDetailApiStore, getProvinceApiStore, getRoomApiStore } = useStores();
     const [openModal, setOpenModal] = useState(false);
     const [rowSelected, setRowSelected] = useState(null);
-
-    const handleView = (row) => {
-        setRowSelected(row);
-        setOpenModal(true);
-    };
-
+    const [rowDetail, setRowDetail] = useState(null);
+    const [roomList, setRoomList] = useState([]);
+    const [provinceList, setProvinceList] = useState([]);
     const [rows, setRows] = useState([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(0);
@@ -71,11 +68,29 @@ const McAllData = observer(() => {
         []
     );
 
+    const handleView = async (row) => {
+        setRowSelected(row);
+        setLoading(true);
+        setOpenModal(true);
+        try {
+            const result = await admitRoomDetailApiStore.handleAdmitRoomDetailService(row.at_id);
+            if (result.error) {
+                return;
+            }
+            const serverResp = result.response;
+            setRowDetail(serverResp);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchGetAllData = async () => {
         setLoading(true);
         try {
             const skip = page * pageSize;
-            const body = new GetAllDataDTO({ skip, take: pageSize });
+            const body = new GetAllDataDTO({ skip, take: 30 });
             const result = await getAllDataApiStore.handleGetAllDataService(body);
 
             if (result.error) {
@@ -100,6 +115,20 @@ const McAllData = observer(() => {
     useEffect(() => {
         fetchGetAllData();
     }, [page]);
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            const resRoom = await getRoomApiStore.handleGetRoomService();
+            const roomData = resRoom?.data ?? resRoom?.response?.data ?? [];
+            if (Array.isArray(roomData)) setRoomList(roomData);
+
+            const resProv = await getProvinceApiStore.handleGetProvinceService();
+            const list = resProv?.data ?? resProv?.response?.data ?? [];
+            if (Array.isArray(list)) setProvinceList(list);
+        };
+
+        fetchInitialData();
+    }, [getRoomApiStore, getProvinceApiStore]);
 
     return (
         <Box height={{ xs: '100%', md: 'calc(100vh - 128px)' }} overflow="hidden">
@@ -137,14 +166,10 @@ const McAllData = observer(() => {
                 open={openModal}
                 onClose={() => setOpenModal(false)}
                 row={rowSelected}
-                vipLimit={rowSelected?.vip_cars_count ?? 1}
-                roomTypes={['Superior', 'Delux', 'VIP']}
-                rooms={[
-                    { type: 'Superior', id: 1, number: '101' },
-                    { type: 'Superior', id: 2, number: '102' },
-                    { type: 'Delux', id: 3, number: 'A001' },
-                    { type: 'VIP', id: 5, number: 'VIP-01' }
-                ]}
+                rowDetail={rowDetail?.data ?? []}
+                vipLimit={rowSelected?.rs_limit_vip_cars ?? 1}
+                roomList={roomList}
+                provinceList={provinceList}
                 onSave={(updated) => {
                     console.log('Updated Data:', updated);
                     setOpenModal(false);

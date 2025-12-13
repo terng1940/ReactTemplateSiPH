@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AddCircleOutline, RemoveCircleOutline, Send } from '@mui/icons-material';
 import { useStores } from 'contexts/StoreContext';
+import { RegisterDTO } from 'dto/register/RegisterDTO';
 
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
@@ -16,7 +17,7 @@ import Divider from '@mui/material/Divider';
 import Alert from '@mui/material/Alert';
 
 const McRegister = () => {
-    const { getProvinceApiStore, getRoomApiStore } = useStores();
+    const { getProvinceApiStore, getRoomApiStore, registerApiStore } = useStores();
     const [hn, setHn] = useState('');
     const [roomMasterId, setRoomType] = useState('');
     const [submitted, setSubmitted] = useState(false);
@@ -44,19 +45,27 @@ const McRegister = () => {
         }
     };
 
-    const handleSubmit = () => {
-        const body = {
+    const handleSubmit = async () => {
+        const roomNumber = 'A001';
+
+        const body = new RegisterDTO({
             hn,
             roomMasterId,
             plates: plates
                 .filter((p) => p.plate.trim() !== '')
                 .map((p) => ({
-                    plate: p.plate,
+                    licensePlate: p.plate,
                     province: p.province
-                }))
-        };
+                })),
+            roomNumber
+        });
 
-        console.log('Submit Data:', body);
+        const result = await registerApiStore.handleRegisterService(body);
+        if (result.error) {
+            return;
+        }
+
+        console.log('Submit Data:', result);
         setSubmitted(true);
 
         setTimeout(() => setSubmitted(false), 3000);
