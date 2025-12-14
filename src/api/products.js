@@ -58,7 +58,7 @@ export async function fetchLoginService(body) {
 
 export async function fetchRefreshTokenService(body) {
     try {
-        const response = await axios.post(ApiPaths.refreshToken, body);
+        const response = await axios.post(ApiPaths.refreshToken, { params: body });
 
         return { response: response.data };
     } catch (err) {
@@ -81,7 +81,7 @@ export async function fetchRefreshTokenService(body) {
 
 export async function fetchVerifyTokenService(body) {
     try {
-        const response = await axios.get(ApiPaths.verifyToken, body);
+        const response = await axios.get(ApiPaths.verifyToken, { params: body });
 
         return { response: response.data };
     } catch (err) {

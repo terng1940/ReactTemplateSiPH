@@ -21,7 +21,8 @@ const McAllData = observer(() => {
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(0);
     const pageSize = 10;
-    const [loading, setLoading] = useState(false);
+    const [listLoading, setListLoading] = useState(false);
+    const [modalLoading, setModalLoading] = useState(false);
 
     const columns = useMemo(
         () => [
@@ -70,7 +71,7 @@ const McAllData = observer(() => {
 
     const handleView = async (row) => {
         setRowSelected(row);
-        setLoading(true);
+        setListLoading(true);
         setOpenModal(true);
         try {
             const result = await admitRoomDetailApiStore.handleAdmitRoomDetailService(row.at_id);
@@ -82,12 +83,12 @@ const McAllData = observer(() => {
         } catch (e) {
             console.error(e);
         } finally {
-            setLoading(false);
+            setListLoading(false);
         }
     };
 
     const fetchGetAllData = async () => {
-        setLoading(true);
+        setListLoading(true);
         try {
             const skip = page * pageSize;
             const body = new GetAllDataDTO({ skip, take: 30 });
@@ -108,7 +109,7 @@ const McAllData = observer(() => {
             setRows([]);
             setTotal(0);
         } finally {
-            setLoading(false);
+            setListLoading(false);
         }
     };
 
@@ -147,7 +148,7 @@ const McAllData = observer(() => {
                                         pageSize={pageSize}
                                         paginationMode="server"
                                         rowCount={total}
-                                        loading={loading}
+                                        loading={listLoading}
                                         disableRowSelectionOnClick
                                         localeText={{ noRowsLabel: 'ไม่มีข้อมูล' }}
                                         sx={{
@@ -170,8 +171,11 @@ const McAllData = observer(() => {
                 vipLimit={rowSelected?.rs_limit_vip_cars ?? 1}
                 roomList={roomList}
                 provinceList={provinceList}
-                onSave={(updated) => {
-                    console.log('Updated Data:', updated);
+                modalLoading={modalLoading}
+                onSave={async () => {
+                    setModalLoading(true);
+                    await fetchGetAllData();
+                    setModalLoading(false);
                     setOpenModal(false);
                 }}
             />

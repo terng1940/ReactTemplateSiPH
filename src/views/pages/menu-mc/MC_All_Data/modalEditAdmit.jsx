@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useStores } from 'contexts/StoreContext';
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -10,22 +12,57 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
-
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
-const ModalEditAdmit = ({ open, onClose, row, rowDetail = [], roomList = [], provinceList = [], vipLimit = 1, onSave }) => {
+const ModalEditAdmit = ({
+    open,
+    onClose,
+    modalLoading = false,
+    row,
+    rowDetail = [],
+    roomList = [],
+    provinceList = [],
+    vipLimit = 1,
+    onSave
+}) => {
+    const { updateDetailApiStore, addLicensePlateApiStore } = useStores();
     const [plates, setPlates] = useState([]);
     const [selectedRoomType, setSelectedRoomType] = useState('');
     const [selectedRoom, setSelectedRoom] = useState('');
 
-    useEffect(() => {
-        if (row) {
-            setPlates(row.plates || []);
-            setSelectedRoomType(row.rm_description || '');
-            setSelectedRoom(row.at_room_number || '');
+    const [initialPlates, setInitialPlates] = useState([]);
+    const [initialRoomType, setInitialRoomType] = useState('');
+    const [initialRoom, setInitialRoom] = useState('');
+    const isEqualPlates = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+    const isUnchanged = isEqualPlates(plates, initialPlates) && selectedRoom === initialRoom && selectedRoomType === initialRoomType;
+    const validate = () => {
+        if (!selectedRoomType) {
+            alert('กรุณาเลือกประเภทห้อง');
+            return false;
         }
-    }, [row]);
+
+        if (!selectedRoom) {
+            alert('กรุณากรอกเลขห้อง');
+            return false;
+        }
+
+        for (let i = 0; i < plates.length; i++) {
+            const p = plates[i];
+
+            if (!p.licensePlate?.trim()) {
+                alert(`กรุณากรอกทะเบียนรถลำดับที่ ${i + 1}`);
+                return false;
+            }
+
+            if (!p.province) {
+                alert(`กรุณาเลือกจังหวัดของทะเบียนรถลำดับที่ ${i + 1}`);
+                return false;
+            }
+        }
+
+        return true;
+    };
 
     const handleAddPlate = () => {
         if (plates.length >= vipLimit) return;
@@ -45,37 +82,59 @@ const ModalEditAdmit = ({ open, onClose, row, rowDetail = [], roomList = [], pro
         setPlates(updated);
     };
 
-    const handleSave = () => {
-        onSave({
-            at_id: row.at_id,
-            roomMasterId: selectedRoomType,
-            roomNumber: selectedRoom,
-            vehicles: plates.map((p) => ({
-                licensePlate: p.licensePlate,
-                provinceId: p.province
-            }))
-        });
+    const handleSave = async () => {
+        if (!validate()) return;
+
+        const existingPlates = plates.filter((p) => p.rv_id);
+        const newPlates = plates.filter((p) => !p.rv_id);
+
+        await Promise.all([
+            ...existingPlates.map((p) =>
+                updateDetailApiStore.handleUpdateDetailService({
+                    at_id: row.at_id,
+                    rv_id: p.rv_id,
+                    room_number: selectedRoom,
+                    license_plate: p.licensePlate,
+                    province: p.province
+                })
+            ),
+            ...newPlates.map((p) =>
+                addLicensePlateApiStore.handleAddLicensePlateService({
+                    at_id: row.at_id,
+                    license_plate: p.licensePlate,
+                    province: p.province
+                })
+            )
+        ]);
+
+        onSave();
     };
 
     useEffect(() => {
-        if (rowDetail.length > 0) {
-            setPlates(
-                rowDetail.map((item) => ({
-                    licensePlate: item.rv_license_plate ?? '',
-                    province: item.rv_province ?? ''
-                }))
-            );
-        } else if (row) {
-            setPlates([]);
-        }
+        if (!rowDetail.length) return;
 
+        const mapped = rowDetail.map((item) => ({
+            rv_id: item.rv_id,
+            licensePlate: item.rv_license_plate ?? '',
+            province: item.rv_province ?? ''
+        }));
+
+        setPlates(mapped);
+        setInitialPlates(mapped);
+    }, [rowDetail]);
+
+    useEffect(() => {
         if (!row) return;
 
-        const matchedRoom = roomList.find((r) => r.roomDescription === row.rm_description);
-
-        setSelectedRoomType(matchedRoom?.roomMasterId ?? '');
         setSelectedRoom(row.at_room_number ?? '');
-    }, [row, rowDetail]);
+        setInitialRoom(row.at_room_number ?? '');
+
+        const matchedRoom = roomList.find((r) => r.roomDescription === row.rm_description);
+        const roomId = matchedRoom?.roomMasterId ?? '';
+
+        setSelectedRoomType(roomId);
+        setInitialRoomType(roomId);
+    }, [row, roomList]);
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
@@ -98,13 +157,27 @@ const ModalEditAdmit = ({ open, onClose, row, rowDetail = [], roomList = [], pro
 
                     {plates.map((plate, index) => (
                         <Grid container spacing={1} alignItems="center" key={index} mb={1}>
-                            <Grid item xs={5}>
+                            <Grid item xs={5} display="flex" alignItems="center" gap={1}>
                                 <TextField
                                     fullWidth
                                     label={`ทะเบียนรถ #${index + 1}`}
                                     value={plate.licensePlate}
                                     onChange={(e) => handlePlateChange(index, 'licensePlate', e.target.value)}
                                 />
+
+                                {!plate.rv_id && (
+                                    <Typography
+                                        variant="caption"
+                                        color="primary"
+                                        sx={{
+                                            border: '1px solid',
+                                            borderRadius: '4px',
+                                            px: 1
+                                        }}
+                                    >
+                                        ใหม่
+                                    </Typography>
+                                )}
                             </Grid>
 
                             <Grid item xs={5}>
@@ -180,8 +253,8 @@ const ModalEditAdmit = ({ open, onClose, row, rowDetail = [], roomList = [], pro
 
             <DialogActions>
                 <Button onClick={onClose}>ยกเลิก</Button>
-                <Button variant="contained" onClick={handleSave}>
-                    บันทึก
+                <Button variant="contained" onClick={handleSave} disabled={isUnchanged || modalLoading}>
+                    {modalLoading ? 'กำลังบันทึก...' : 'บันทึก'}
                 </Button>
             </DialogActions>
         </Dialog>

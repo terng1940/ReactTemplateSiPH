@@ -79,8 +79,8 @@ export const JWTProvider = ({ children }) => {
         init();
     }, []);
 
-    const login = async (email, password) => {
-        const response = await axios.post(ApiPaths.login, { email, password });
+    const login = async (username, password) => {
+        const response = await axios.post(ApiPaths.login, { username, password });
         const { serviceToken, user } = response.data;
         setSession(serviceToken);
         dispatch({
