@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
 
 // project imports
 import Loadable from 'ui-component/Loadable';
@@ -31,6 +32,10 @@ const AuthenticationRoutes = {
     path: '/',
     element: <MinimalLayout />,
     children: [
+        {
+            index: true,
+            element: <Navigate to="/login" replace />
+        },
         {
             path: '/login',
             element: <AuthLogin />

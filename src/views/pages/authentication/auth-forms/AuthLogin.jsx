@@ -55,69 +55,41 @@ const JWTLogin = ({ loginProp, ...others }) => {
     return (
         <Formik
             initialValues={{
-                email: 'info@codedthemes.com',
-                password: '123456',
+                username: 'mikemc',
+                password: '1234',
                 submit: null
             }}
             validationSchema={Yup.object().shape({
-                email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+                username: Yup.string().max(255).required('Username is required'),
                 password: Yup.string().max(255).required('Password is required')
             })}
-            // onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-            //     try {
-            //         await login(values.email, values.password);
-
-            //         if (scriptedRef.current) {
-            //             setStatus({ success: true });
-            //             setSubmitting(false);
-            //         }
-            //     } catch (err) {
-            //         console.error(err);
-            //         if (scriptedRef.current) {
-            //             setStatus({ success: false });
-            //             setErrors({ submit: err.message });
-            //             setSubmitting(false);
-            //         }
-            //     }
-            // }}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                console.log('🔥 onSubmit fired', values);
-
                 try {
-                    await login(values.email, values.password);
-                    console.log('🔥 login finished');
-
-                    navigate('/menu-mc/default');
-                    console.log('🔥 navigate done');
-
-                    setStatus({ success: true });
-                    setSubmitting(false);
+                    await login(values.username, values.password);
+                    navigate(RoutePaths.menuDefault, { replace: true });
                 } catch (err) {
-                    console.log('❌ login error', err);
-                    setStatus({ success: false });
-                    setErrors({ submit: err.message });
-                    setSubmitting(false);
+                    if (scriptedRef.current) {
+                        setStatus({ success: false });
+                        setErrors({ submit: err.message });
+                        setSubmitting(false);
+                    }
                 }
             }}
         >
             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                 <form noValidate onSubmit={handleSubmit} {...others}>
-                    <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                        <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+                    <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
+                        {' '}
+                        <InputLabel htmlFor="outlined-adornment-username-login">Username</InputLabel>{' '}
                         <OutlinedInput
-                            id="outlined-adornment-email-login"
-                            type="email"
-                            value={values.email}
-                            name="email"
+                            id="outlined-adornment-username-login"
+                            type="text"
+                            value={values.username}
+                            name="username"
                             onBlur={handleBlur}
                             onChange={handleChange}
-                            inputProps={{}}
-                        />
-                        {touched.email && errors.email && (
-                            <FormHelperText error id="standard-weight-helper-text-email-login">
-                                {errors.email}
-                            </FormHelperText>
-                        )}
+                        />{' '}
+                        {touched.username && errors.username && <FormHelperText error>{errors.username}</FormHelperText>}{' '}
                     </FormControl>
 
                     <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>

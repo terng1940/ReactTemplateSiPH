@@ -154,9 +154,8 @@ const ProfileSection = () => {
                                         <Box sx={{ p: 2, pb: 0 }}>
                                             <Stack>
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
-                                                    <Typography variant="h4">Good Morning,</Typography>
-                                                    <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                        {user?.name}
+                                                    <Typography component="span" variant="h4" >
+                                                        {user?.username}
                                                     </Typography>
                                                 </Stack>
                                             </Stack>

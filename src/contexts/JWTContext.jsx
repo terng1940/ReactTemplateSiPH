@@ -49,29 +49,47 @@ export const JWTProvider = ({ children }) => {
 
     useEffect(() => {
         const init = async () => {
+            // try {
+            //     const serviceToken = localStorage.getItem('serviceToken');
+            //     if (serviceToken && verifyToken(serviceToken)) {
+            //         setSession(serviceToken);
+            //         const response = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
+            //         const user = response.data.data;
+            //         dispatch({
+            //             type: LOGIN,
+            //             payload: { user }
+            //         });
+            //     } else {
+            //         dispatch({ type: LOGOUT });
+            //     }
+            // } catch (err) {
+            //     console.error(err);
+            //     dispatch({ type: LOGOUT });
+            // }
+            const token = localStorage.getItem('serviceToken');
+
+            if (!token) {
+                dispatch({ type: LOGOUT });
+                return;
+            }
+
+            if (verifyToken(token)) {
+                setSession(token);
+                const res = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
+                dispatch({ type: LOGIN, payload: { user: res.data.data } });
+                return;
+            }
+
+            // token หมด → ลอง refresh
             try {
-                const serviceToken = window.localStorage.getItem('serviceToken');
+                const refreshRes = await axios.post(`${ApiPaths.refreshToken}?token=${serviceToken}`);
+                const newToken = refreshRes.data.data.token;
 
-                if (serviceToken && verifyToken(serviceToken)) {
-                    setSession(serviceToken);
+                setSession(newToken);
+                const res = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
 
-                    const response = await axios.get(ApiPaths.verifyToken);
-                    const { user } = response.data;
-
-                    dispatch({
-                        type: LOGIN,
-                        payload: {
-                            isLoggedIn: true,
-                            user
-                        }
-                    });
-                } else {
-                    dispatch({
-                        type: LOGOUT
-                    });
-                }
-            } catch (err) {
-                console.error(err);
+                dispatch({ type: LOGIN, payload: { user: res.data.data } });
+            } catch {
                 dispatch({ type: LOGOUT });
             }
         };
@@ -81,7 +99,9 @@ export const JWTProvider = ({ children }) => {
 
     const login = async (username, password) => {
         const response = await axios.post(ApiPaths.login, { username, password });
-        const { serviceToken, user } = response.data;
+        const serviceToken = response.data.data.token;
+        const user = response.data.data;
+        console.log('LOGIN SUCCESS', user);
         setSession(serviceToken);
         dispatch({
             type: LOGIN,
@@ -91,27 +111,6 @@ export const JWTProvider = ({ children }) => {
             }
         });
     };
-
-    // const login = async (email, password) => {
-    //     const serviceToken = 'mock-token-123';
-
-    //     const user = {
-    //         id: 1,
-    //         email,
-    //         name: 'Demo User'
-    //     };
-
-    //     setSession(serviceToken);
-    //     dispatch({
-    //         type: LOGIN,
-    //         payload: {
-    //             isLoggedIn: true,
-    //             user
-    //         }
-    //     });
-
-    //     return true;
-    // };
 
     const register = async (email, password, firstName, lastName) => {
         // todo: this flow need to be recode as it not verified

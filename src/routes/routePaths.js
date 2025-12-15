@@ -5,7 +5,7 @@ const RoutePaths = {
 
     overview: '/overview',
     menuDefault: '/menu-mc/default',
-    menuAllData: '/menu-mc/allData',
+    menuAllData: '/menu-mc/all-data',
     menudRegister: '/menu-mc/register'
 };
 export default RoutePaths;

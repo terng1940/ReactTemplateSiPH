@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 // project imports
 import useAuth from 'hooks/useAuth';
@@ -12,15 +13,14 @@ import useAuth from 'hooks/useAuth';
  * @param {PropTypes.node} children children element/node
  */
 const AuthGuard = ({ children }) => {
-    const { isLoggedIn } = useAuth();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            navigate('login', { replace: true });
-        }
-    }, [isLoggedIn, navigate]);
-
+    const { isLoggedIn, isInitialized } = useAuth();
+    console.log('AuthGuard', { isInitialized, isLoggedIn });
+    if (!isInitialized) {
+        return null;
+    }
+    if (!isLoggedIn) {
+        return <Navigate to="/login" replace />;
+    }
     return children;
 };
 
