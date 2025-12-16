@@ -18,14 +18,14 @@ const dashboard = {
     icon: icons.IconDashboard,
     type: 'group',
     children: [
-        {
-            id: 'default',
-            title: <FormattedMessage id="default" />,
-            type: 'item',
-            url: RoutePaths.menuDefault,
-            icon: icons.IconDashboard,
-            breadcrumbs: false
-        },
+        // {
+        //     id: 'default',
+        //     title: <FormattedMessage id="default" />,
+        //     type: 'item',
+        //     url: RoutePaths.menuDefault,
+        //     icon: icons.IconDashboard,
+        //     breadcrumbs: false
+        // },
         {
             id: 'allData',
             title: 'ข้อมูลราย MC',
@@ -39,7 +39,7 @@ const dashboard = {
             title: 'สมัครสมาชิก MC',
             type: 'item',
             url: RoutePaths.menudRegister,
-            icon: icons.IconDashboard,
+            icon: icons.IconDeviceAnalytics,
             breadcrumbs: false
         }
     ]

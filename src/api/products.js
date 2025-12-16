@@ -214,6 +214,29 @@ export async function fetchRegisterService(body) {
     }
 }
 
+export async function fetchRegisterAdminService(body) {
+    try {
+        const response = await axios.post(ApiPaths.registerAdmin, body);
+
+        return { response: response.data };
+    } catch (err) {
+        if (err.response) {
+            const { data, status } = err.response;
+
+            return {
+                error: new CustomException(data?.message || 'Request failed', {
+                    statusCode: status,
+                    messageCode: data?.message_code
+                })
+            };
+        }
+
+        return {
+            error: new CustomException('Unexpected error: ' + err.message)
+        };
+    }
+}
+
 export async function fetchGetRoomService() {
     try {
         const response = await axios.get(ApiPaths.getRoom);

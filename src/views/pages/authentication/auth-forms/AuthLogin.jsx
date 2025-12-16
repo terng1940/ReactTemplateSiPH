@@ -66,7 +66,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
                     await login(values.username, values.password);
-                    navigate(RoutePaths.menuDefault, { replace: true });
+                    navigate(RoutePaths.menuAllData, { replace: true });
                 } catch (err) {
                     if (scriptedRef.current) {
                         setStatus({ success: false });
@@ -126,7 +126,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
 
                     <Grid container alignItems="center" justifyContent="space-between">
                         <Grid item>
-                            <FormControlLabel
+                            {/* <FormControlLabel
                                 control={
                                     <Checkbox
                                         checked={checked}
@@ -136,10 +136,10 @@ const JWTLogin = ({ loginProp, ...others }) => {
                                     />
                                 }
                                 label="Keep me logged in"
-                            />
+                            /> */}
                         </Grid>
                         <Grid item>
-                            <Typography
+                            {/* <Typography
                                 variant="subtitle1"
                                 component={Link}
                                 to={RoutePaths.forgotPassword}
@@ -147,7 +147,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                                 sx={{ textDecoration: 'none' }}
                             >
                                 Forgot Password?
-                            </Typography>
+                            </Typography> */}
                         </Grid>
                     </Grid>
 
@@ -159,7 +159,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                     <Box sx={{ mt: 2 }}>
                         <AnimateButton>
                             <Button color="secondary" disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained">
-                                Sign In
+                                เข้าสู่ระบบ
                             </Button>
                         </AnimateButton>
                     </Box>

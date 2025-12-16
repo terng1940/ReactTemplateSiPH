@@ -19,7 +19,7 @@ export const ThemeDirection = {
 const config = {
     menuOrientation: MenuOrientation.VERTICAL,
     miniDrawer: false,
-    fontFamily: `'Roboto', sans-serif`,
+    fontFamily: `'Noto Sans Thai', 'Roboto', sans-serif`,
     borderRadius: 8,
     outlinedFilled: true,
     mode: ThemeMode.LIGHT,

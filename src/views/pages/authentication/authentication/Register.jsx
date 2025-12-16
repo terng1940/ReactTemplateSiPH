@@ -15,6 +15,7 @@ import Logo from 'ui-component/Logo';
 import AuthRegister from '../auth-forms/AuthRegister';
 import BackgroundPattern1 from 'ui-component/cards/BackgroundPattern1';
 import AuthSlider from 'ui-component/cards/AuthSlider';
+import logo from 'assets/images/logo-siph.png';
 
 // assets
 import AuthBlueCard from 'assets/images/auth/auth-signup-blue-card.svg';
@@ -62,10 +63,10 @@ const Register = () => {
                                             pt={{ sm: 1 }}
                                         >
                                             <Typography color="secondary.main" gutterBottom variant={downMD ? 'h3' : 'h2'}>
-                                                Sign up
+                                                สมัครเข้าสู่ระบบ
                                             </Typography>
                                             <Typography color="textPrimary" gutterBottom variant="h4">
-                                                Enter credentials to continue
+                                                MC Portal
                                             </Typography>
                                         </Stack>
                                     </Grid>
@@ -85,7 +86,7 @@ const Register = () => {
                             <Grid item xs={12}>
                                 <Grid item container direction="column" alignItems="flex-end" xs={12}>
                                     <Typography component={Link} to={RoutePaths.login} variant="subtitle1" sx={{ textDecoration: 'none' }}>
-                                        Already have an account?
+                                        เข้าสู่ระบบ
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -99,41 +100,30 @@ const Register = () => {
                                 <span />
                                 <Box
                                     sx={{
-                                        '&:after': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: { xs: '50%', xl: '45%' },
-                                            left: { xs: '25%', xl: '35%' },
-                                            width: 260,
-                                            backgroundSize: 380,
-                                            height: 290,
-                                            backgroundImage: `url(${AuthWhiteCard})`,
-                                            backgroundRepeat: 'no-repeat',
-                                            backgroundPosition: 'center',
-                                            animation: '15s wings ease-in-out infinite'
-                                        },
-                                        '&:before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: { xs: '10%', xl: '12%' },
-                                            left: { xs: '15%', xl: '25%' },
-                                            width: 360,
-                                            height: 350,
-                                            backgroundSize: 460,
-                                            backgroundImage: `url(${AuthBlueCard})`,
-                                            backgroundRepeat: 'no-repeat',
-                                            backgroundPosition: 'center',
-                                            animation: '15s wings ease-in-out infinite',
-                                            animationDelay: '1s'
-                                        }
+                                        position: 'absolute',
+                                        inset: 0, // top:0 left:0 right:0 bottom:0
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
-                                />
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 500,
+                                            height: 500,
+                                            backgroundImage: `url(${logo})`,
+                                            backgroundRepeat: 'no-repeat',
+                                            backgroundPosition: 'center',
+                                            backgroundSize: 'contain'
+                                        }}
+                                    />
+                                </Box>
                             </Grid>
                             <Grid item xs={12}>
                                 <Grid item container justifyContent="center" sx={{ pb: 8 }}>
-                                    <Grid item xs={10} lg={8} sx={{ '& .slick-list': { pb: 2 } }}>
+                                    {/* <Grid item xs={10} lg={8} sx={{ '& .slick-list': { pb: 2 } }}>
                                         <AuthSlider items={items} />
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                         </Grid>

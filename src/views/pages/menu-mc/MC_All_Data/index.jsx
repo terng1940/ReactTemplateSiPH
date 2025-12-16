@@ -19,7 +19,10 @@ const McAllData = observer(() => {
     const [provinceList, setProvinceList] = useState([]);
     const [rows, setRows] = useState([]);
     const [total, setTotal] = useState(0);
-    const [page, setPage] = useState(0);
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 10
+    });
     const pageSize = 10;
     const [listLoading, setListLoading] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
@@ -61,7 +64,7 @@ const McAllData = observer(() => {
                         }}
                         onClick={() => handleView(params.row)}
                     >
-                        View
+                        แก้ไข
                     </button>
                 )
             }
@@ -90,8 +93,12 @@ const McAllData = observer(() => {
     const fetchGetAllData = async () => {
         setListLoading(true);
         try {
-            const skip = page * pageSize;
-            const body = new GetAllDataDTO({ skip, take: 30 });
+            const skip = paginationModel.page * paginationModel.pageSize;
+            const body = new GetAllDataDTO({
+                skip,
+                take: paginationModel.pageSize
+            });
+
             const result = await getAllDataApiStore.handleGetAllDataService(body);
 
             if (result.error) {
@@ -101,9 +108,8 @@ const McAllData = observer(() => {
             }
 
             const serverResp = result.response;
-            const dataArray = serverResp?.data ?? serverResp ?? [];
-            setRows(Array.isArray(dataArray) ? dataArray : []);
-            setTotal(serverResp?.total ?? (Array.isArray(dataArray) ? dataArray.length : 0));
+            setRows(serverResp?.data ?? []);
+            setTotal(serverResp?.total ?? 0);
         } catch (e) {
             console.error(e);
             setRows([]);
@@ -115,7 +121,7 @@ const McAllData = observer(() => {
 
     useEffect(() => {
         fetchGetAllData();
-    }, [page]);
+    }, [paginationModel.page, paginationModel.pageSize]);
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -138,16 +144,16 @@ const McAllData = observer(() => {
                     <Box height={{ xs: '100%', md: 'auto' }} overflow="auto">
                         <Grid>
                             <Box py={1}>
-                                <Paper sx={{ width: '100%', p: 1, overflow: 'visible', height: 'calc(100vh - 350px)' }}>
+                                <Paper sx={{ width: '100%', p: 1, overflow: 'visible', height: 'calc(100vh - 300px)' }}>
                                     <DataGrid
                                         rows={rows}
                                         columns={columns}
                                         getRowId={(row) => row.at_id}
-                                        page={page}
-                                        onPageChange={(newPage) => setPage(newPage)}
-                                        pageSize={pageSize}
                                         paginationMode="server"
                                         rowCount={total}
+                                        paginationModel={paginationModel}
+                                        onPaginationModelChange={setPaginationModel}
+                                        pageSizeOptions={[10]}
                                         loading={listLoading}
                                         disableRowSelectionOnClick
                                         localeText={{ noRowsLabel: 'ไม่มีข้อมูล' }}

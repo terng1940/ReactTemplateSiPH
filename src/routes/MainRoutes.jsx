@@ -21,10 +21,10 @@ const MainRoutes = {
         </AuthGuard>
     ),
     children: [
-        {
-            path: RoutePaths.menuDefault,
-            element: <DefaultTheme />
-        },
+        // {
+        //     path: RoutePaths.menuDefault,
+        //     element: <DefaultTheme />
+        // },
         {
             path: RoutePaths.menuAllData,
             element: <McAllData />

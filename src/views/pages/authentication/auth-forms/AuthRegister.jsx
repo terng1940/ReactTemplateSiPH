@@ -17,6 +17,7 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
 
 // third party
 import * as Yup from 'yup';
@@ -32,10 +33,13 @@ import { openSnackbar } from 'store/slices/snackbar';
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useStores } from 'contexts/StoreContext';
+import RoutePaths from 'routes/routePaths';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
 const JWTRegister = ({ ...others }) => {
+    const { registerAdminApiStore } = useStores();
     const theme = useTheme();
     const navigate = useNavigate();
     const scriptedRef = useScriptRef();
@@ -62,6 +66,8 @@ const JWTRegister = ({ ...others }) => {
         setLevel(strengthColor(temp));
     };
 
+    const ROLE_OPTIONS = [{ label: 'Admin', value: 'ADMIN' }];
+
     useEffect(() => {
         changePassword('123456');
     }, []);
@@ -71,47 +77,53 @@ const JWTRegister = ({ ...others }) => {
             <Grid container direction="column" justifyContent="center" spacing={2}>
                 <Grid item xs={12} container alignItems="center" justifyContent="center">
                     <Box sx={{ mb: 2 }}>
-                        <Typography variant="subtitle1">Sign up with Email address</Typography>
+                        <Typography variant="subtitle1">สมัครเข้าสู่ระบบด้วย username และ password</Typography>
                     </Box>
                 </Grid>
             </Grid>
 
             <Formik
                 initialValues={{
-                    email: '',
+                    username: '',
                     password: '',
-                    firstName: '',
-                    lastName: '',
+                    role_name: 'ADMIN',
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    password: Yup.string().max(255).required('Password is required')
+                    username: Yup.string().required('Username is required'),
+                    password: Yup.string().required('Password is required'),
+                    role_name: Yup.string().required('Role is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
-                        await register(values.email, values.password, values.firstName, values.lastName);
+                        const payload = {
+                            username: values.username,
+                            password: values.password,
+                            role_name: values.role_name
+                        };
+
+                        await registerAdminApiStore.handleRegisterAdminService(payload);
+                        console.log('redirect to:', payload);
+
                         if (scriptedRef.current) {
                             setStatus({ success: true });
                             setSubmitting(false);
+
                             dispatch(
                                 openSnackbar({
                                     open: true,
-                                    message: 'Your registration has been successfully completed.',
+                                    message: 'Register success',
                                     variant: 'alert',
-                                    alert: {
-                                        color: 'success'
-                                    },
+                                    alert: { color: 'success' },
                                     close: false
                                 })
                             );
-
-                            setTimeout(() => {
-                                navigate('/login', { replace: true });
-                            }, 1500);
                         }
+
+                        setTimeout(() => {
+                            navigate(RoutePaths.login, { replace: true });
+                        }, 1000);
                     } catch (err) {
-                        console.error(err);
                         if (scriptedRef.current) {
                             setStatus({ success: false });
                             setErrors({ submit: err.message });
@@ -122,50 +134,21 @@ const JWTRegister = ({ ...others }) => {
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} {...others}>
-                        <Grid container spacing={{ xs: 0, sm: 2 }}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    fullWidth
-                                    label="First Name"
-                                    margin="normal"
-                                    name="firstName"
-                                    type="text"
-                                    value={values.firstName}
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    sx={{ ...theme.typography.customInput }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Last Name"
-                                    margin="normal"
-                                    name="lastName"
-                                    type="text"
-                                    value={values.lastName}
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    sx={{ ...theme.typography.customInput }}
-                                />
-                            </Grid>
-                        </Grid>
-                        <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                            <InputLabel htmlFor="outlined-adornment-email-register">Email Address / Username</InputLabel>
+                        <FormControl
+                            fullWidth
+                            error={Boolean(touched.username && errors.username)}
+                            sx={{ ...theme.typography.customInput }}
+                        >
+                            <InputLabel htmlFor="outlined-adornment-username-register">Username</InputLabel>
                             <OutlinedInput
-                                id="outlined-adornment-email-register"
-                                type="email"
-                                value={values.email}
-                                name="email"
+                                id="outlined-adornment-username-register"
+                                type="text"
+                                value={values.username}
+                                name="username"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
-                                inputProps={{}}
                             />
-                            {touched.email && errors.email && (
-                                <FormHelperText error id="standard-weight-helper-text--register">
-                                    {errors.email}
-                                </FormHelperText>
-                            )}
+                            {touched.username && errors.username && <FormHelperText error>{errors.username}</FormHelperText>}
                         </FormControl>
 
                         <FormControl
@@ -207,7 +190,35 @@ const JWTRegister = ({ ...others }) => {
                             )}
                         </FormControl>
 
-                        {strength !== 0 && (
+                        <FormControl
+                            fullWidth
+                            error={Boolean(touched.role_name && errors.role_name)}
+                            sx={{ ...theme.typography.customInput }}
+                        >
+                            <TextField
+                                select
+                                fullWidth
+                                variant="outlined"
+                                name="role_name"
+                                value={values.role_name}
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                error={Boolean(touched.role_name && errors.role_name)}
+                                helperText={touched.role_name && errors.role_name}
+                                InputLabelProps={{ shrink: true }}
+                                sx={{ ...theme.typography.customInput }}
+                            >
+                                {ROLE_OPTIONS.map((role) => (
+                                    <MenuItem key={role.value} value={role.value}>
+                                        {role.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+
+                            {touched.role_name && errors.role_name && <FormHelperText error>{errors.role_name}</FormHelperText>}
+                        </FormControl>
+
+                        {/* {strength !== 0 && (
                             <FormControl fullWidth>
                                 <Box sx={{ mb: 2 }}>
                                     <Grid container spacing={2} alignItems="center">
@@ -222,10 +233,10 @@ const JWTRegister = ({ ...others }) => {
                                     </Grid>
                                 </Box>
                             </FormControl>
-                        )}
+                        )} */}
 
                         <Grid container alignItems="center" justifyContent="space-between">
-                            <Grid item>
+                            {/* <Grid item>
                                 <FormControlLabel
                                     control={
                                         <Checkbox
@@ -244,7 +255,7 @@ const JWTRegister = ({ ...others }) => {
                                         </Typography>
                                     }
                                 />
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                         {errors.submit && (
                             <Box sx={{ mt: 3 }}>
@@ -263,7 +274,7 @@ const JWTRegister = ({ ...others }) => {
                                     variant="contained"
                                     color="secondary"
                                 >
-                                    Sign up
+                                    สมัครสมาชิก
                                 </Button>
                             </AnimateButton>
                         </Box>

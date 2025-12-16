@@ -8,6 +8,7 @@ const ApiPaths = {
     updateDetail: '/api/v1/mc/update-admit-detail',
     addLicensePlate: '/api/v1/mc/add-license-plate',
     registerMC: '/api/v1/mc/register',
+    registerAdmin: '/api/v1/authorization/register',
     getRoom: '/api/v1/mc/rooms',
     getProvince: '/api/v1/mc/provinces'
 };

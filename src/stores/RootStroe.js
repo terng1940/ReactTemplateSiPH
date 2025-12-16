@@ -5,6 +5,7 @@ import { GetProvinceApiStore } from './GetProvinceApiStore/GetProvinceApiStore';
 import { GetRoomApiStore } from './GetRoomApiStore/GetRoomApiStore';
 import { LoginApiStore } from './LoginApiStore/LoginApiStore';
 import { RefreshTokenApiStore } from './RefreshTokenApiStore/RefreshTokenApiStore';
+import { RegisterAdminApiStore } from './RegisterAdminApiStore/RegisterAdminApiStore';
 import { RegisterApiStore } from './RegisterApiStore/RegisterApiStore';
 import { UpdateDetailApiStore } from './UpdateDetailApiStore/UpdateDetailApiStore';
 import { VerifyTokenApiStore } from './VerifyTokenApiStore/VerifyTokenApiStore';
@@ -17,6 +18,7 @@ export const rootStore = {
     getRoomApiStore: new GetRoomApiStore(),
     refreshTokenApiStore: new RefreshTokenApiStore(),
     loginApiStore: new LoginApiStore(),
+    registerAdminApiStore: new RegisterAdminApiStore(),
     registerApiStore: new RegisterApiStore(),
     updateDetailApiStore: new UpdateDetailApiStore(),
     verifyTokenApiStore: new VerifyTokenApiStore()

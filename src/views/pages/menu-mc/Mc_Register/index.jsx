@@ -15,6 +15,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Alert from '@mui/material/Alert';
+import logo from 'assets/images/logo-siph.png';
 
 const McRegister = () => {
     const { getProvinceApiStore, getRoomApiStore, registerApiStore } = useStores();
@@ -110,21 +111,19 @@ const McRegister = () => {
                     width: '100%',
                     borderRadius: 3,
                     overflow: 'hidden',
-                    borderTop: '6px solid #1976d2'
+                    borderTop: '6px solid #e4f1fc'
                 }}
             >
                 <Box
                     sx={{
-                        backgroundColor: '#1976d2',
+                        backgroundColor: '#e4f1fc',
                         color: 'white',
                         textAlign: 'center',
                         py: 3,
                         px: 2
                     }}
                 >
-                    <Typography variant="h3" sx={{ mb: 1 }}>
-                        🏥
-                    </Typography>
+                     <img src={logo} alt="" width="80" />
                     <Typography variant="h5" fontWeight="bold">
                         J-Park Medical Center
                     </Typography>

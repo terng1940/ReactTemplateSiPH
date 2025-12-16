@@ -49,49 +49,49 @@ export const JWTProvider = ({ children }) => {
 
     useEffect(() => {
         const init = async () => {
+            try {
+                const serviceToken = localStorage.getItem('serviceToken');
+                if (serviceToken && verifyToken(serviceToken)) {
+                    setSession(serviceToken);
+                    const response = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
+                    const user = response.data.data;
+                    dispatch({
+                        type: LOGIN,
+                        payload: { user }
+                    });
+                } else {
+                    dispatch({ type: LOGOUT });
+                }
+            } catch (err) {
+                console.error(err);
+                dispatch({ type: LOGOUT });
+            }
+            // const token = localStorage.getItem('serviceToken');
+
+            // if (!token) {
+            //     dispatch({ type: LOGOUT });
+            //     return;
+            // }
+
+            // if (verifyToken(token)) {
+            //     setSession(token);
+            //     const res = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
+            //     dispatch({ type: LOGIN, payload: { user: res.data.data } });
+            //     return;
+            // }
+
+            // // token หมด → ลอง refresh
             // try {
-            //     const serviceToken = localStorage.getItem('serviceToken');
-            //     if (serviceToken && verifyToken(serviceToken)) {
-            //         setSession(serviceToken);
-            //         const response = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
-            //         const user = response.data.data;
-            //         dispatch({
-            //             type: LOGIN,
-            //             payload: { user }
-            //         });
-            //     } else {
-            //         dispatch({ type: LOGOUT });
-            //     }
-            // } catch (err) {
-            //     console.error(err);
+            //     const refreshRes = await axios.post(`${ApiPaths.refreshToken}?token=${serviceToken}`);
+            //     const newToken = refreshRes.data.data.token;
+
+            //     setSession(newToken);
+            //     const res = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
+
+            //     dispatch({ type: LOGIN, payload: { user: res.data.data } });
+            // } catch {
             //     dispatch({ type: LOGOUT });
             // }
-            const token = localStorage.getItem('serviceToken');
-
-            if (!token) {
-                dispatch({ type: LOGOUT });
-                return;
-            }
-
-            if (verifyToken(token)) {
-                setSession(token);
-                const res = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
-                dispatch({ type: LOGIN, payload: { user: res.data.data } });
-                return;
-            }
-
-            // token หมด → ลอง refresh
-            try {
-                const refreshRes = await axios.post(`${ApiPaths.refreshToken}?token=${serviceToken}`);
-                const newToken = refreshRes.data.data.token;
-
-                setSession(newToken);
-                const res = await axios.get(`${ApiPaths.verifyToken}?token=${serviceToken}`);
-
-                dispatch({ type: LOGIN, payload: { user: res.data.data } });
-            } catch {
-                dispatch({ type: LOGOUT });
-            }
         };
 
         init();
